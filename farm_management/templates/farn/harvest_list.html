@@ -1,0 +1,42 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Harvests</h2>
+    <a href="{% url 'harvest_create' %}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Record Harvest
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Batch</th>
+                        <th>Quantity (grams)</th>
+                        <th>Cumilative Total</th>
+                        <th>Avg From a Bag</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for harvest in harvests %}
+                    <tr>
+                        <td>{{ harvest.harvest_date }}</td>
+                        <td>{{ harvest.batch.batch_code }}</td>
+                        <td>{{ harvest.quantity_g }}</td>
+                        <td>{{ harvest.batch.total_harvested }}g</td>
+                        <td>{{ harvest.batch.total_harvested_per_bag }}grams / bag</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No harvests recorded</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

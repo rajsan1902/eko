@@ -1,0 +1,86 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Batches</h2>
+    <a href="{% url 'batch_create' %}" class="btn btn-success">
+        <i class="fas fa-plus"></i> New Batch
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Batch Code</th>
+                        <th>Batch Date</th>
+                        <th>Substrate Type</th>
+                        <th>Bag Count</th>
+                        <th>Harvested</th>
+                        <th>per Bag</th>
+
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for batch in batches %}
+                    <tr>
+                        <td>{{ batch.batch_code }}</td>
+                        <td>{{ batch.batch_date }}</td>
+                        <td>{{ batch.substrate_type }}</td>
+                        <td>{{ batch.number_of_bags }}</td>
+                        <td>{{ batch.total_harvested }} g</td>
+                        <td>{{ batch.production_per_bag }} g</td>
+                        <td>
+                            <span class="badge badge-{% if batch.status == 'active' %}success{% elif batch.status == 'planned' %}info{% else %}secondary{% endif %}">
+                                {{ batch.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'batch_edit' batch.id %}" class="btn btn-sm btn-primary" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" title="Delete"
+                                    data-toggle="modal" data-target="#deleteModal{{ batch.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal{{ batch.id }}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Delete</h5>
+                                            <button type="button" class="close" data-dismiss="modal">
+                                                <span>&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete batch <strong>{{ batch.batch_code }}</strong>?</p>
+                                            <p class="text-danger">This action cannot be undone.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <form action="{% url 'batch_delete' batch.id %}" method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No batches found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

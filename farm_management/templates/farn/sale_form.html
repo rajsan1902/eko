@@ -1,0 +1,46 @@
+{% extends 'farm/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <h3>Sale Items</h3>
+    {{ formset.management_form }}
+
+    {% for item_form in formset %}
+        <div class="sale-item-form">
+            <h4>Item {{ forloop.counter }}</h4>
+            {{ item_form.as_p }}
+            {% if item_form.instance.pk %}
+                {{ item_form.DELETE }} Delete this item
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Create Sale</button>
+</form>
+    </div>
+</div>
+
+<style>
+    /* Style the form inputs */
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #28a745;
+    }
+</style>
+{% endblock %}

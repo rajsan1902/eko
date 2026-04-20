@@ -1,0 +1,92 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Batches</h5>
+                <h2>{{ total_batches }}</h2>
+                <p>Active: {{ active_batches }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Monthly Sales</h5>
+                <h2>₹{{ monthly_sales|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Monthly Expenses</h5>
+                <h2>₹{{ monthly_expenses|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Net Profit</h5>
+                <h2>₹{{ profit|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                Recent Sales
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Date</th><th>Customer</th><th>Amount</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in recent_sales %}
+                        <tr>
+                            <td>{{ sale.sale_date }}</td>
+                            <td>{{ sale.customer.name }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center">No sales recorded</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                Recent Harvests
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Date</th><th>Batch</th><th>Quantity</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for harvest in recent_harvests %}
+                        <tr>
+                            <td>{{ harvest.harvest_date }}</td>
+                            <td>{{ harvest.batch.batch_code }}</td>
+                            <td>{{ harvest.quantity_kg }} kg</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center">No harvests recorded</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

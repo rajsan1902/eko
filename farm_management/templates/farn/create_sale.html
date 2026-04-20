@@ -1,0 +1,547 @@
+{% extends 'farm/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Record Sale</h2>
+        <a href="{% url 'sale_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Sales
+        </a>
+    </div>
+
+    <!-- Summary Cards -->
+  
+<div class="row g-1 g-sm-2 mb-3">
+    <!-- Available Stock -->
+    <div class="col-4">
+        <div class="card text-white bg-success compact-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">Stock</h6>
+                        <div class="stats-number">{{ available_stock }}<span class="stats-unit">g</span></div>
+                    </div>
+                    <div class="stats-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sold Today -->
+    <div class="col-4">
+        <div class="card text-white bg-info compact-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">Today</h6>
+                        <div class="stats-number">{{ sold_today }}<span class="stats-unit">g</span></div>
+                    </div>
+                    <div class="stats-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sold This Month -->
+    <div class="col-4">
+        <div class="card text-white bg-warning compact-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">Month</h6>
+                        <div class="stats-number">{{ sold_this_month }}<span class="stats-unit">g</span></div>
+                    </div>
+                    <div class="stats-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Sale Form -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Sale Details</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" id="saleForm">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <!-- Customer Selection Toggle Buttons -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Customer Options</label>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="btn-existing">
+                                <i class="fas fa-search"></i> Select Existing Customer
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="btn-new">
+                                <i class="fas fa-user-plus"></i> Create New Customer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Existing Customer Section -->
+                <div id="existing-customer-section">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="customer_search" class="form-label">Search Customer</label>
+                            <div class="input-group">
+                                <input type="text" id="customer_search" class="form-control" 
+                                       placeholder="Type name or mobile number to search...">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                                        <i class="fas fa-times"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="search-results" class="list-group mt-2" style="display: none;"></div>
+                            <small class="form-text text-muted">Search by customer name or mobile number</small>
+                        </div>
+                    </div>
+                    <div id="selected-customer-info" class="alert alert-success mt-2" style="display: none;">
+                        <i class="fas fa-check-circle"></i> 
+                        Selected Customer: <strong id="selected-name"></strong> 
+                        (<span id="selected-mobile"></span>)
+                        <button type="button" class="close float-end" id="clear-selection">&times;</button>
+                    </div>
+                </div>
+                
+                <!-- New Customer Section -->
+                <div id="new-customer-section" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_new_customer_name" class="form-label">Customer Name</label>
+                            <input type="text" name="new_customer_name" id="id_new_customer_name" class="form-control" placeholder="Enter customer name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_new_customer_mobile" class="form-label">Mobile Number</label>
+                            <input type="text" name="new_customer_mobile" id="id_new_customer_mobile" class="form-control" placeholder="10-digit mobile number">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="id_new_customer_email" class="form-label">Email (Optional)</label>
+                            <input type="email" name="new_customer_email" id="id_new_customer_email" class="form-control" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="id_new_customer_address" class="form-label">Address (Optional)</label>
+                            <textarea name="new_customer_address" id="id_new_customer_address" class="form-control" rows="2" placeholder="Customer address"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden field for selected customer ID -->
+                <input type="hidden" name="customer_search" id="selected_customer_id">
+                
+                <!-- Sale Details -->
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.sale_date.id_for_label }}" class="form-label">
+                            Sale Date
+                        </label>
+                        {{ form.sale_date }}
+                        {% if form.sale_date.errors %}
+                        <div class="text-danger">{{ form.sale_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.sale_quantity_g.id_for_label }}" class="form-label">
+                            Quantity (grams)
+                        </label>
+                        {{ form.sale_quantity_g }}
+                        {% if form.sale_quantity_g.errors %}
+                        <div class="text-danger">{{ form.sale_quantity_g.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">Enter quantity in grams</small>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.sale_amount.id_for_label }}" class="form-label">
+                            Total Amount (₹)
+                        </label>
+                        {{ form.sale_amount }}
+                        {% if form.sale_amount.errors %}
+                        <div class="text-danger">{{ form.sale_amount.errors }}</div>
+                        {% endif %}
+                        <small class="form-text text-muted">Total sale amount in rupees</small>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create Sale
+                    </button>
+                    <a href="{% url 'sale_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Low Stock Warning -->
+    {% if available_stock < 1000 %}
+    <div class="alert alert-warning mt-3">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Low Stock Alert!</strong> Only {{ available_stock }}g available. Please harvest more mushrooms.
+    </div>
+    {% endif %}
+</div>
+
+<!-- jQuery and JavaScript for Customer Search -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Toggle between existing and new customer
+    $('#btn-existing').click(function() {
+        $(this).addClass('active');
+        $('#btn-new').removeClass('active');
+        $('#existing-customer-section').show();
+        $('#new-customer-section').hide();
+        $('#selected-customer-info').hide();
+        $('#customer_search').val('');
+        $('#search-results').hide();
+    });
+    
+    $('#btn-new').click(function() {
+        $(this).addClass('active');
+        $('#btn-existing').removeClass('active');
+        $('#existing-customer-section').hide();
+        $('#new-customer-section').show();
+        $('#selected_customer_id').val('');
+    });
+    
+    // Search customers
+    let searchTimeout;
+    $('#customer_search').on('input', function() {
+        clearTimeout(searchTimeout);
+        const query = $(this).val();
+        
+        if (query.length < 2) {
+            $('#search-results').hide().empty();
+            return;
+        }
+        
+        searchTimeout = setTimeout(function() {
+            $.ajax({
+                url: '/search-customers/',
+                method: 'GET',
+                data: { q: query },
+                success: function(data) {
+                    const resultsDiv = $('#search-results');
+                    resultsDiv.empty();
+                    
+                    if (data.length > 0) {
+                        data.forEach(function(customer) {
+                            resultsDiv.append(`
+                                <a href="#" class="list-group-item list-group-item-action customer-result" 
+                                   data-id="${customer.id}"
+                                   data-name="${customer.name}" 
+                                   data-mobile="${customer.mobile}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>${customer.name}</strong><br>
+                                            <small class="text-muted">${customer.mobile}</small>
+                                        </div>
+                                        <div class="text-right">
+                                            <small>Total: ₹${customer.total_purchases || 0}</small><br>
+                                            <small>${customer.total_quantity || 0}g</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            `);
+                        });
+                        resultsDiv.show();
+                    } else {
+                        resultsDiv.append(`
+                            <div class="list-group-item text-muted">
+                                No customer found. 
+                                <a href="#" id="create-new-from-search">Create new customer?</a>
+                            </div>
+                        `);
+                        resultsDiv.show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Search error:", error);
+                    $('#search-results').html('<div class="list-group-item text-danger">Error searching customers</div>').show();
+                }
+            });
+        }, 300);
+    });
+    
+    // Select customer from search results
+    $(document).on('click', '.customer-result', function(e) {
+        e.preventDefault();
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        const mobile = $(this).data('mobile');
+        
+        $('#selected_customer_id').val(id);
+        $('#selected-name').text(name);
+        $('#selected-mobile').text(mobile);
+        $('#selected-customer-info').show();
+        $('#customer_search').val(`${name} (${mobile})`);
+        $('#search-results').hide();
+        
+        // Clear new customer fields if any
+        $('#id_new_customer_name').val('');
+        $('#id_new_customer_mobile').val('');
+    });
+    
+    // Clear selection
+    $('#clear-search, #clear-selection').click(function() {
+        $('#customer_search').val('');
+        $('#selected_customer_id').val('');
+        $('#selected-customer-info').hide();
+        $('#search-results').hide();
+    });
+    
+    // Create new from search
+    $(document).on('click', '#create-new-from-search', function(e) {
+        e.preventDefault();
+        const query = $('#customer_search').val();
+        $('#btn-new').click();
+        $('#id_new_customer_name').val(query);
+        $('#id_new_customer_mobile').focus();
+    });
+    
+    // Auto-fill when mobile number is entered in new customer
+    $('#id_new_customer_mobile').on('blur', function() {
+        const mobile = $(this).val();
+        if (mobile.length >= 10) {
+            $.ajax({
+                url: '/search-customers/',
+                data: { q: mobile },
+                success: function(data) {
+                    if (data.length > 0 && data[0].mobile === mobile) {
+                        if (confirm(`Customer "${data[0].name}" already exists. Use this customer?`)) {
+                            $('#btn-existing').click();
+                            $('#customer_search').val(`${data[0].name} (${data[0].mobile})`);
+                            $('#selected_customer_id').val(data[0].id);
+                            $('#selected-name').text(data[0].name);
+                            $('#selected-mobile').text(data[0].mobile);
+                            $('#selected-customer-info').show();
+                        }
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+
+<style>
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    
+    .card {
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1.25rem;
+        background-color: rgba(0,0,0,.03);
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+    
+    .btn-outline-primary {
+        background-color: transparent;
+        border: 1px solid #007bff;
+        color: #007bff;
+    }
+    
+    .btn-outline-primary.active {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .alert {
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+    
+    .close {
+        float: right;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        opacity: .5;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .list-group-item {
+        padding: 0.75rem 1.25rem;
+        border: 1px solid rgba(0,0,0,.125);
+        cursor: pointer;
+        text-decoration: none;
+        color: #212529;
+        display: block;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+    
+    .input-group {
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-group .form-control {
+        flex: 1;
+    }
+    
+    .float-end {
+        float: right;
+    }
+    
+    .fw-bold {
+        font-weight: 700;
+    }
+    .compact-card {
+        transition: all 0.3s ease;
+    }
+    
+    .compact-card .card-body {
+        padding: 0.5rem;
+    }
+    
+    .compact-card .card-title {
+        font-size: 0.65rem;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .compact-card .stats-number {
+        font-size: 0.9rem;
+        font-weight: bold;
+        margin-bottom: 0;
+        line-height: 1.1;
+    }
+    
+    .compact-card .stats-unit {
+        font-size: 0.55rem;
+    }
+    
+    .compact-card .stats-icon i {
+        font-size: 1rem;
+    }
+    
+    @media (min-width: 576px) {
+        .compact-card .card-body {
+            padding: 0.75rem;
+        }
+        
+        .compact-card .card-title {
+            font-size: 0.7rem;
+        }
+        
+        .compact-card .stats-number {
+            font-size: 1.1rem;
+        }
+        
+        .compact-card .stats-icon i {
+            font-size: 1.2rem;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .compact-card .card-body {
+            padding: 1rem;
+        }
+        
+        .compact-card .card-title {
+            font-size: 0.8rem;
+        }
+        
+        .compact-card .stats-number {
+            font-size: 1.4rem;
+        }
+        
+        .compact-card .stats-icon i {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+{% endblock %}

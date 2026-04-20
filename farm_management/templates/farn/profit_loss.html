@@ -1,0 +1,79 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+<h2 class="mb-4">Profit & Loss Statement</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="form-inline">
+            <div class="form-group mr-2">
+                <label class="mr-2">From:</label>
+                <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" class="form-control">
+            </div>
+            <div class="form-group mr-2">
+                <label class="mr-2">To:</label>
+                <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5>Total Sales</h5>
+                <h2>₹{{ total_sales|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5>Total Expenses</h5>
+                <h2>₹{{ total_expenses|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white {% if profit >= 0 %}bg-info{% else %}bg-warning{% endif %} mb-3">
+            <div class="card-body">
+                <h5>Net Profit/Loss</h5>
+                <h2>₹{{ profit|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-success text-white">
+        Daily Breakdown
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Sales</th>
+                        <th>Expenses</th>
+                        <th>Profit/Loss</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in date_range %}
+                    <tr>
+                        <td>{{ day.date }}</td>
+                        <td>₹{{ day.sales|floatformat:2 }}</td>
+                        <td>₹{{ day.expenses|floatformat:2 }}</td>
+                        <td class="{% if day.profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ₹{{ day.profit|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

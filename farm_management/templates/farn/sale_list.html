@@ -1,0 +1,109 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+
+<!-- Summary Cards Section -->
+<div class="row mb-4">
+    <!-- Available Stock Card -->
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Available Stock</h6>
+                        <h2 class="mb-0">{{ available_stock }} g</h2>
+                        <small>{{ available_stock|floatformat:0 }}g ({{ available_stock|divisibleby:1000|yesno:"kg," }})</small>
+                    </div>
+                    <div>
+                        <i class="fas fa-boxes fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sold Today Card -->
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Sold Today</h6>
+                        <h2 class="mb-0">{{ sold_today }} g</h2>
+                        <small>₹{{ today_revenue }} revenue</small>
+                    </div>
+                    <div>
+                        <i class="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sold This Month Card -->
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Sold This Month</h6>
+                        <h2 class="mb-0">{{ sold_this_month }} g</h2>
+                        <small>₹{{ monthly_revenue }} revenue</small>
+                    </div>
+                    <div>
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Existing New Sale Button and Table -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sales</h2>
+    <a href="{% url 'sale_create' %}" class="btn btn-success">
+        <i class="fas fa-plus"></i> New Sale
+    </a>
+</div>
+
+<!-- Sales Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Quantity (g)</th>
+                            <th>Amount (₹)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.sale_date|date:"Y-m-d" }}</td>
+                            <td>{{ sale.customer_name }}</td>
+                            <td>{{ sale.sale_quantity_g }} g</td>
+                            <td>₹{{ sale.sale_amount }}</td>
+                            <td>
+                                <a href="{% url 'sale_detail' sale.id %}" class="btn btn-sm btn-info">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No sales recorded yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
