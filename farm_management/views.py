@@ -34,6 +34,7 @@ def dashboard(request):
     # Summary statistics
     total_batches = SpawnBatch.objects.count()
     active_batches = SpawnBatch.objects.filter(status='active').count()
+    active_beds = SpawnBatch.objects.filter(status='active').aggregate(total=Sum('number_of_bags'))['total'] or 0
 
     # Current month's sales
     current_month = timezone.now().month
@@ -58,6 +59,7 @@ def dashboard(request):
     context = {
         'total_batches': total_batches,
         'active_batches': active_batches,
+        'active_beds' : active_beds,
         # 'monthly_sales': monthly_sales,
         'monthly_expenses': monthly_expenses,
         # 'profit': monthly_sales - monthly_expenses,
