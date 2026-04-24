@@ -4,9 +4,22 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Database (you often don't want to track this either)
+# SQLite databases
+*.sqlite
 *.sqlite3
+*.db
+*.db.sqlite3
 db.sqlite3
+
+# Database journals
+*.sqlite-journal
+*.sqlite3-journal
+
+# Database wal files
+*.sqlite-wal
+*.sqlite3-wal
+*.sqlite-shm
+*.sqlite3-shm
 
 # Virtual environment
 venv/
