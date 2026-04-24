@@ -39,10 +39,10 @@ def dashboard(request):
     # Current month's sales
     current_month = timezone.now().month
     current_year = timezone.now().year
-    # monthly_sales = Sale.objects.filter(
-    #     sale_date__year=current_year,
-    #     sale_date__month=current_month
-    # ).aggregate(total=Sum('total_amount'))['total'] or 0
+    monthly_sales = Sale.objects.filter(
+        sale_date__year=current_year,
+        sale_date__month=current_month
+    ).aggregate(total=Sum('sale_amount'))['total'] or 0
 
     # Monthly expenses
     monthly_expenses = Expense.objects.filter(
@@ -60,9 +60,9 @@ def dashboard(request):
         'total_batches': total_batches,
         'active_batches': active_batches,
         'active_beds' : active_beds,
-        # 'monthly_sales': monthly_sales,
+        'monthly_sales': monthly_sales,
         'monthly_expenses': monthly_expenses,
-        # 'profit': monthly_sales - monthly_expenses,
+        'profit': monthly_sales - monthly_expenses,
         'recent_sales': recent_sales,
         'recent_harvests': recent_harvests,
     }

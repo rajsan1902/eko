@@ -55,6 +55,7 @@
                         <tr>
                             <td>{{ sale.sale_date }}</td>
                             <td>{{ sale.customer.name }}</td>
+                            <td>{{ sale.sale_amount }}</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3" class="text-center">No sales recorded</td></tr>
@@ -79,7 +80,7 @@
                         <tr>
                             <td>{{ harvest.harvest_date }}</td>
                             <td>{{ harvest.batch.batch_code }}</td>
-                            <td>{{ harvest.quantity_kg }} kg</td>
+                            <td>{{ harvest.quantity_g }} grams</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3" class="text-center">No harvests recorded</td></tr>
