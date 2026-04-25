@@ -32,9 +32,11 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     # Summary statistics
-    total_batches = SpawnBatch.objects.count()
+    total_batches = SpawnBatch.objects.count() or 0
     active_batches = SpawnBatch.objects.filter(status='active').count()
-    active_beds = SpawnBatch.objects.filter(status='active').aggregate(total=Sum('number_of_bags'))['total'] or 0
+    active_beds = SpawnBatch.objects.filter(status='active').aggregate(total=Sum('number_of_bags'))['total'] or 0    
+    total_beds = SpawnBatch.objects.filter().aggregate(total=Sum('number_of_bags'))['total'] or 0
+    contaminated_beds = SpawnBatch.objects.filter(status='condaminated').aggregate(total=Sum('number_of_bags'))['total'] or 0
 
     # Current month's sales
     current_month = timezone.now().month
@@ -60,6 +62,9 @@ def dashboard(request):
         'total_batches': total_batches,
         'active_batches': active_batches,
         'active_beds' : active_beds,
+        'total_beds': total_beds,
+        'contaminated_beds': contaminated_beds,
+
         'monthly_sales': monthly_sales,
         'monthly_expenses': monthly_expenses,
         'profit': monthly_sales - monthly_expenses,
