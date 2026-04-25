@@ -62,8 +62,13 @@ class SpawnBatch(models.Model):
         ('sawdust', 'Sawdust'),
     ]
 
+    MUSHTYPE_CHOICES = [
+        ('oyster', 'Oyster Mushroom'),
+    ]
+
     batch_code = models.PositiveIntegerField(unique=True)
     mushroom_type = models.ForeignKey('MushroomType', on_delete=models.CASCADE)
+    mushroom_type = models.CharField(max_length=20, choices=MUSHTYPE_CHOICES, default='oyster')
     batch_date = models.DateField()
     substrate_type = models.CharField(max_length=20, choices=SUBSTRATE_CHOICES, default='straw')
     number_of_bags = models.PositiveIntegerField(default=0)
@@ -74,7 +79,7 @@ class SpawnBatch(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.batch_code} - {self.mushroom_type.name}"
+        return f"{self.batch_code} - {self.mushroom_type} - {self.batch_date}"
 
     @property
     def total_harvested(self):
