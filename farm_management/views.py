@@ -125,8 +125,6 @@ def harvest_create(request):
 
     return render(request, 'farm/harvest_form.html', {'form': form, 'title': 'Record Harvest'})
 
-# views.py
-
 def sale_create(request):
     if request.method == 'POST':
         form = SaleForm(request.POST)
@@ -353,7 +351,7 @@ def profit_loss(request):
 
     # Calculate sales
     sales = Sale.objects.filter(sale_date__range=[start_date, end_date])
-    total_sales = sales.aggregate(total=Sum('final_amount'))['total'] or 0
+    total_sales = sales.aggregate(total=Sum('sale_amount'))['total'] or 0
 
     # Calculate expenses
     expenses = Expense.objects.filter(date__range=[start_date, end_date])
@@ -365,7 +363,7 @@ def profit_loss(request):
     date_range = []
     for i in range((end_date - start_date).days + 1):
         date = start_date + timedelta(days=i)
-        day_sales = sales.filter(sale_date=date).aggregate(total=Sum('final_amount'))['total'] or 0
+        day_sales = sales.filter(sale_date=date).aggregate(total=Sum('sale_amount'))['total'] or 0
         day_expenses = expenses.filter(date=date).aggregate(total=Sum('amount'))['total'] or 0
         date_range.append({
             'date': date,
