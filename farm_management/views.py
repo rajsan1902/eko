@@ -32,16 +32,19 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     # Summary statistics
-    total_batches = SpawnBatch.objects.count()
+    total_batches = SpawnBatch.objects.count() or 0
     active_batches = SpawnBatch.objects.filter(status='active').count()
+    active_beds = SpawnBatch.objects.filter(status='active').aggregate(total=Sum('number_of_bags'))['total'] or 0    
+    total_beds = SpawnBatch.objects.filter().aggregate(total=Sum('number_of_bags'))['total'] or 0
+    contaminated_beds = SpawnBatch.objects.filter(status='condaminated').aggregate(total=Sum('number_of_bags'))['total'] or 0
 
     # Current month's sales
     current_month = timezone.now().month
     current_year = timezone.now().year
-    # monthly_sales = Sale.objects.filter(
-    #     sale_date__year=current_year,
-    #     sale_date__month=current_month
-    # ).aggregate(total=Sum('total_amount'))['total'] or 0
+    monthly_sales = Sale.objects.filter(
+        sale_date__year=current_year,
+        sale_date__month=current_month
+    ).aggregate(total=Sum('sale_amount'))['total'] or 0
 
     # Monthly expenses
     monthly_expenses = Expense.objects.filter(
@@ -58,9 +61,13 @@ def dashboard(request):
     context = {
         'total_batches': total_batches,
         'active_batches': active_batches,
-        # 'monthly_sales': monthly_sales,
+        'active_beds' : active_beds,
+        'total_beds': total_beds,
+        'contaminated_beds': contaminated_beds,
+
+        'monthly_sales': monthly_sales,
         'monthly_expenses': monthly_expenses,
-        # 'profit': monthly_sales - monthly_expenses,
+        'profit': monthly_sales - monthly_expenses,
         'recent_sales': recent_sales,
         'recent_harvests': recent_harvests,
     }

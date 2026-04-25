@@ -1,0 +1,40 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+*.db.sqlite3
+db.sqlite3
+
+# Database journals
+*.sqlite-journal
+*.sqlite3-journal
+
+# Database wal files
+*.sqlite-wal
+*.sqlite3-wal
+*.sqlite-shm
+*.sqlite3-shm
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log

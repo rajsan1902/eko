@@ -3,15 +3,53 @@
 <h2 class="mb-4">Dashboard</h2>
 
 <div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Total Batches</h5>
-                <h2>{{ total_batches }}</h2>
-                <p>Active: {{ active_batches }}</p>
+   <div class="col-md-3 mb-3">
+    <div class="card bg-primary text-dark">
+        <div class="card-header text-center text-white">
+            <h5 class="card-title mb-0">Batches & Beds Overview</h5>
+        </div>
+        <div class="card-body p-3">
+            <!-- Main metrics -->
+            <div class="row g-2 mb-3">
+                <div class="col-12">
+                    <div class="bg-info bg-opacity-15 rounded p-2 text-center">
+                        <small class="text-white">Total Batches</small>
+                        <h3 class="mb-0 text-white fw-bold">{{ total_batches }}</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sub metrics in grid -->
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="bg-success bg-opacity-10 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Active Batches</small>
+                        <h4 class="mb-0 text-white fw-bold">{{ active_batches }}</h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-info bg-opacity-2 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Total Beds</small>
+                        <h4 class="mb-0 text-white fw-bold">{{ total_beds }}</h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-success text-white bg-opacity-25 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Active Beds</small>
+                        <h4 class="mb-0 text-whtie fw-bold">{{ active_beds }}</h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-danger bg-opacity-25 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Contaminated Beds</small>
+                        <h4 class="mb-0 text-white fw-bold">{{ contaminated_beds }}</h4>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
     <div class="col-md-3 mb-3">
         <div class="card text-white bg-success">
             <div class="card-body">
@@ -54,6 +92,7 @@
                         <tr>
                             <td>{{ sale.sale_date }}</td>
                             <td>{{ sale.customer.name }}</td>
+                            <td>{{ sale.sale_amount }}</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3" class="text-center">No sales recorded</td></tr>
@@ -78,7 +117,7 @@
                         <tr>
                             <td>{{ harvest.harvest_date }}</td>
                             <td>{{ harvest.batch.batch_code }}</td>
-                            <td>{{ harvest.quantity_kg }} kg</td>
+                            <td>{{ harvest.quantity_g }} grams</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3" class="text-center">No harvests recorded</td></tr>
