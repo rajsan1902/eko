@@ -33,10 +33,10 @@ def logout_view(request):
 def dashboard(request):
     # Summary statistics
     total_batches = SpawnBatch.objects.count() or 0
-    active_batches = SpawnBatch.objects.filter(status='active').count()
-    active_beds = SpawnBatch.objects.filter(status='active').aggregate(total=Sum('number_of_bags'))['total'] or 0    
+    active_batches = SpawnBatch.objects.exclude(status='completed').count()
+    active_beds = SpawnBatch.objects.exclude(status='completed').aggregate(total=Sum('number_of_bags'))['total'] or 0    
     total_beds = SpawnBatch.objects.filter().aggregate(total=Sum('number_of_bags'))['total'] or 0
-    contaminated_beds = SpawnBatch.objects.filter(status='condaminated').aggregate(total=Sum('number_of_bags'))['total'] or 0
+    contaminated_beds = SpawnBatch.objects.exclude(status='completed').aggregate(total=Sum('number_of_bags_contaminated'))['total'] or 0
 
     # Current month's sales
     current_month = timezone.now().month
@@ -319,12 +319,12 @@ def expense_create(request):
 def batch_edit(request, pk):
     batch = get_object_or_404(SpawnBatch, pk=pk)
     if request.method == 'POST':
-        form = SpawnBatchForm(request.POST, instance=batch)
+        form = SpawnBatchFormEdit(request.POST, instance=batch)
         if form.is_valid():
             form.save()
             return redirect('batch_list')
     else:
-        form = SpawnBatchForm(instance=batch)
+        form = SpawnBatchFormEdit(instance=batch)
     return render(request, 'farm/batch_form.html', {'form': form})
 
 @login_required

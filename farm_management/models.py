@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -52,7 +54,10 @@ class Stock(models.Model):
 class SpawnBatch(models.Model):
     STATUS_CHOICES = [
         ('active', 'Active'),
-        ('harvested', 'Harvested'),
+        
+        ('incubation', 'Incubation'),
+        ('fruiting', 'Fruiting'),        
+        ('harvesting', 'Harvesting'),
         ('completed', 'Completed'),
     ]
 
@@ -72,6 +77,7 @@ class SpawnBatch(models.Model):
     batch_date = models.DateField()
     substrate_type = models.CharField(max_length=20, choices=SUBSTRATE_CHOICES, default='straw')
     number_of_bags = models.PositiveIntegerField(default=0)
+    number_of_bags_contaminated = models.PositiveIntegerField(default=0)
     no_spawns_used = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     notes = models.TextField(blank=True)
@@ -80,6 +86,13 @@ class SpawnBatch(models.Model):
 
     def __str__(self):
         return f"{self.batch_code} - {self.mushroom_type} - {self.batch_date}"
+    
+    @property
+    def bag_age_days(self):
+        """Calculate age of the bag in days"""
+        if self.batch_date:
+            return (date.today() - self.batch_date).days
+        return 0
 
     @property
     def total_harvested(self):
@@ -88,6 +101,12 @@ class SpawnBatch(models.Model):
     @property
     def total_sold(self):
         return self.sale_items.aggregate(total=Sum('quantity_g'))['total'] or 0
+    
+    @property
+    def active_bags(self):
+        return self.number_of_bags-self.number_of_bags_contaminated
+    
+
 
     @property
     def current_inventory(self):
@@ -97,7 +116,7 @@ class SpawnBatch(models.Model):
     def production_per_bag(self):
         """Calculate production per bag in grams"""
         if self.number_of_bags > 0:
-            return self.total_harvested / self.number_of_bags
+            return int(self.total_harvested / self.number_of_bags)
         return 0
 
 
