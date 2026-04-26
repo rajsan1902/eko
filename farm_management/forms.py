@@ -6,6 +6,16 @@ class SpawnBatchForm(forms.ModelForm):
     class Meta:
         model = SpawnBatch
         fields = '__all__'
+        exclude = ['created_by', 'created_at', 'number_of_bags_contaminated']
+        widgets = {
+            'batch_date': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+    
+class SpawnBatchFormEdit(forms.ModelForm):
+    class Meta:
+        model = SpawnBatch
+        fields = '__all__'
         exclude = ['created_by', 'created_at']
         widgets = {
             'batch_date': forms.DateInput(attrs={'type': 'date'}),

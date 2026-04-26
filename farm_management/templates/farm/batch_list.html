@@ -15,8 +15,11 @@
                     <tr>
                         <th>Batch Code</th>
                         <th>Batch Date</th>
+                        <th>Batch Age</th>
                         <th>Substrate Type</th>
-                        <th>Bag Count</th>
+                        <th>Total Bags</th>
+                        <th>Contaminated Bags</th>
+                        <th>Activ Bags</th>                        
                         <th>Harvested</th>
                         <th>per Bag</th>
 
@@ -29,12 +32,15 @@
                     <tr>
                         <td>{{ batch.batch_code }}</td>
                         <td>{{ batch.batch_date }}</td>
-                        <td>{{ batch.substrate_type }}</td>
+                        <td>{{ batch.bag_age_days }}</td>
+                        <td>{{ batch.substrate_type }}</td>                        
                         <td>{{ batch.number_of_bags }}</td>
+                        <td>{{ batch.number_of_bags_contaminated }}</td>
+                        <td>{{ batch.active_bags }}</td>
                         <td>{{ batch.total_harvested }} g</td>
                         <td>{{ batch.production_per_bag }} g</td>
                         <td>
-                            <span class="badge badge-{% if batch.status == 'active' %}success{% elif batch.status == 'planned' %}info{% else %}secondary{% endif %}">
+                            <span class="badge badge-{% if batch.status == 'incubation' %}success{% elif batch.status == 'fruiting' %}warning{% else %}secondary{% endif %}">
                                 {{ batch.get_status_display }}
                             </span>
                         </td>
