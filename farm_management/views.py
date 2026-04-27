@@ -127,7 +127,7 @@ def harvest_create(request):
 
 def sale_create(request):
     if request.method == 'POST':
-        form = SaleForm(request.POST)
+        form = SaleForm(request.POST, current_user=request.user)
         if form.is_valid():
             try:
                 with transaction.atomic():
@@ -172,8 +172,8 @@ def sale_create(request):
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
-        form = SaleForm()
-
+        form = SaleForm(current_user=request.user)
+        
     # Get summary data for cards
     today = timezone.now().date()
     current_month = today.month
