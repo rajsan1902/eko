@@ -71,11 +71,21 @@ class SaleForm(forms.ModelForm):
 
     class Meta:
         model = Sale
-        fields = ['sale_date', 'sale_quantity_g', 'sale_amount']
+        fields = ['sale_date', 'sold_by', 'payment_status', 'partial_payment_amount', 'sale_quantity_g', 'sale_amount']
         widgets = {
             'sale_date': forms.DateInput(attrs={
                 'type': 'date',
                 'class': 'form-control'
+            }),
+            'sold_by': forms.Select(attrs={  # Added sold_by widget
+                'class': 'form-control'
+            }),
+            'payment_status': forms.Select(attrs={  # Added sold_by widget
+                'class': 'form-control'
+            }),
+            'partial_payment_amount': forms.NumberInput(attrs={  # Added sold_by widget
+                'class': 'form-control',
+                'placeholder': 'Partial payment amount in ₹',
             }),
             'sale_quantity_g': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -92,7 +102,10 @@ class SaleForm(forms.ModelForm):
         }
         labels = {
             'sale_quantity_g': 'Quantity (grams)',
-            'sale_amount': 'Total Amount (₹)'
+            'sale_amount': 'Total Amount (₹)',
+            'sold_by': 'Sold By',
+            'payment_status' : 'Payment Status',
+            'partial_payment_amount' : 'Partial Payment'
         }
         help_texts = {
             'sale_quantity_g': 'Enter the quantity in grams (e.g., 500 for half kg)',
@@ -100,10 +113,19 @@ class SaleForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop('current_user', None)
         super().__init__(*args, **kwargs)
         # Make date field optional (defaults to today)
         if not self.instance.pk:
             self.fields['sale_date'].initial = timezone.now().date()
+
+
+        # Set current user as default selected in dropdown
+        if self.current_user:
+            self.fields['sold_by'].initial = self.current_user
+            # Optional: Limit queryset to only active users or staff
+            self.fields['sold_by'].queryset = User.objects.all()  # Or User.objects.filter(is_active=True)
+
 
     def clean_sale_quantity_g(self):
         quantity = self.cleaned_data['sale_quantity_g']

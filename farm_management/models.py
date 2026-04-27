@@ -197,12 +197,26 @@ class Customer(models.Model):
 
 class Sale(models.Model):
     """Simple sale record - all quantities in grams"""
+    STATUS_CHOICES =  [
+        ('paid', 'Paid'),
+        ('unpaid', 'Unpaid'),
+        ('partially_paid', 'Partially Paid'),
+    ]
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name='sales')
     customer_name = models.CharField(max_length=200)  # Denormalized for quick display
     customer_mobile = models.CharField(max_length=20)  # Denormalized for quick display
     sale_date = models.DateField(default=timezone.now)
     sale_quantity_g = models.PositiveIntegerField(help_text="Quantity in grams")
     sale_amount = models.DecimalField(max_digits=12, decimal_places=2, help_text="Total sale amount in ₹")
+    sold_by = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,  # or models.SET_NULL, null=True depending on your needs
+        related_name='sales',      # Allows you to do user.sales.all()
+        null=True,                 # Optional: allow null values
+        blank=True                 # Optional: allow blank in forms
+    )
+    payment_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
+    partial_payment_amount = models.DecimalField(max_digits=12, decimal_places=2, help_text="amount in ₹", null=True, blank=True, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
