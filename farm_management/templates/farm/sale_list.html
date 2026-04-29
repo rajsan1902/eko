@@ -85,7 +85,7 @@
                         {% for sale in sales %}
                         <tr>
                             <td>{{ sale.id }}</td>
-                            <td>{{ sale.sale_date|date:"Y-m-d" }}</td>
+                            <td>{{ sale.sale_date|date:"d-m-Y" }}</td>
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.sale_quantity_g }} g</td>
                             <td>₹{{ sale.sale_amount }}</td>
