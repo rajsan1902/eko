@@ -10,11 +10,17 @@
         </div>
         <div class="card-body p-3">
             <!-- Main metrics -->
-            <div class="row g-2 mb-3">
-                <div class="col-12">
+            <div class="row g-2 m-1 p-1 border border-2">
+                <div class="col-6">
                     <div class="bg-info bg-opacity-15 rounded p-2 text-center">
-                        <small class="text-white">Total Batches</small>
-                        <h3 class="mb-0 text-white fw-bold">{{ total_batches }}</h3>
+                        <h6 class="text-white">Total Batches</h6>
+                        <h6 class="mb-0 text-white fw-bold">{{ total_batches }}</h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-info bg-opacity-2 rounded p-2 mb-2 text-center">
+                        <h6 class="text-white">Total Beds</h6>
+                        <h6 class="mb-0 text-white fw-bold">{{ total_beds }}</h6>
                     </div>
                 </div>
             </div>
@@ -27,12 +33,7 @@
                         <h4 class="mb-0 text-white fw-bold">{{ active_batches }}</h4>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="bg-info bg-opacity-2 rounded p-2 mb-2 text-center">
-                        <small class="text-white">Total Beds</small>
-                        <h4 class="mb-0 text-white fw-bold">{{ total_beds }}</h4>
-                    </div>
-                </div>
+                
                 <div class="col-6">
                     <div class="bg-success text-white bg-opacity-25 rounded p-2 mb-2 text-center">
                         <small class="text-white">Active Beds</small>
