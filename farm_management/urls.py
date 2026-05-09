@@ -9,6 +9,7 @@ urlpatterns = [
     # Batch management
     path('batches/', views.batch_list, name='batch_list'),
     path('batches/create/', views.batch_create, name='batch_create'),
+    path('batch/<int:pk>/update-completed/', views.update_completed_beds, name='update_completed_beds'),
 
     # Harvest management
     path('harvests/', views.harvest_list, name='harvest_list'),

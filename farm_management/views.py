@@ -101,6 +101,35 @@ def batch_create(request):
         form = SpawnBatchForm(initial={'batch_code': new_batch_code, 'batch_date':tdate})
     return render(request, 'farm/batch_form.html', {'form': form, 'title': 'Create Batch'})
 
+def update_completed_beds(request, pk):
+    batch = get_object_or_404(SpawnBatch, pk=pk)
+    
+    if request.method == 'POST':
+        form = SpawnBatchCompleteForm(request.POST, instance=batch)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Successfully updated completed beds for {batch.batch_code}')
+            return redirect('batch_list')
+    else:
+        form = SpawnBatchCompleteForm(instance=batch)
+    
+    # Calculate batch information for display
+    batch_info = {
+        'total_beds': batch.number_of_bags,
+        'completed_beds': batch.number_of_bags_completed,
+        'remaining_beds': batch.number_of_bags - batch.number_of_bags_completed,
+        'completion_percentage': round((batch.number_of_bags_completed / batch.number_of_bags * 100), 1) if batch.number_of_bags > 0 else 0
+    }
+    
+    context = {
+        'form': form,
+        'title': f'Update Completed Beds - {batch.batch_code}',
+        'batch_info': batch_info,
+        'batch': batch
+    }
+    
+    return render(request, 'farm/update_completed_beds.html', context)
+
 @login_required
 def harvest_list(request):
     harvests = Harvest.objects.all().order_by('-harvest_date')
