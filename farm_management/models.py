@@ -78,6 +78,7 @@ class SpawnBatch(models.Model):
     substrate_type = models.CharField(max_length=20, choices=SUBSTRATE_CHOICES, default='straw')
     number_of_bags = models.PositiveIntegerField(default=0)
     number_of_bags_contaminated = models.PositiveIntegerField(default=0)
+    number_of_bags_completed = models.PositiveIntegerField(default=0)
     no_spawns_used = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     notes = models.TextField(blank=True)

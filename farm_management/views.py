@@ -34,10 +34,11 @@ def dashboard(request):
     # Summary statistics
     total_batches = SpawnBatch.objects.count() or 0
     active_batches = SpawnBatch.objects.exclude(status='completed').count()
-    total_active_beds = SpawnBatch.objects.exclude(status='completed').aggregate(total=Sum('number_of_bags'))['total'] or 0    
+    total_active_beds = SpawnBatch.objects.aggregate(total=Sum('number_of_bags'))['total'] or 0    
     total_beds = SpawnBatch.objects.filter().aggregate(total=Sum('number_of_bags'))['total'] or 0
-    contaminated_beds = SpawnBatch.objects.exclude(status='completed').aggregate(total=Sum('number_of_bags_contaminated'))['total'] or 0
-    active_beds = total_active_beds - contaminated_beds
+    contaminated_beds = SpawnBatch.objects.aggregate(total=Sum('number_of_bags_contaminated'))['total'] or 0
+    completed_beds = SpawnBatch.objects.aggregate(total=Sum('number_of_bags_completed'))['total'] or 0
+    active_beds = total_active_beds - contaminated_beds - completed_beds
     # Current month's sales
     current_month = timezone.now().month
     current_year = timezone.now().year
@@ -64,6 +65,7 @@ def dashboard(request):
         'active_beds' : active_beds,
         'total_beds': total_beds,
         'contaminated_beds': contaminated_beds,
+        'completed_beds': completed_beds,
 
         'monthly_sales': monthly_sales,
         'monthly_expenses': monthly_expenses,
