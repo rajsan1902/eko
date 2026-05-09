@@ -2,9 +2,14 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Batches</h2>
-    <a href="{% url 'batch_create' %}" class="btn btn-success">
-        <i class="fas fa-plus"></i> New Batch
-    </a>
+    <div class="d-flex justify-content-between align-items-end">
+        <a href="{% url 'batch_create' %}" class="btn btn-success">
+            <i class="fas fa-check"></i> Mark Completed 
+        </a>&nbsp;&nbsp;
+        <a href="{% url 'batch_create' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> New Batch
+        </a>
+    </div>
 </div>
 
 <div class="card">
@@ -19,6 +24,7 @@
                         <th>Substrate Type</th>
                         <th>Total Bags</th>
                         <th>Contaminated Bags</th>
+                        <th>Completed Bags</th>
                         <th>Activ Bags</th>                        
                         <th>Harvested</th>
                         <th>per Bag</th>
@@ -36,6 +42,7 @@
                         <td>{{ batch.substrate_type }}</td>                        
                         <td>{{ batch.number_of_bags }}</td>
                         <td>{{ batch.number_of_bags_contaminated }}</td>
+                        <td>{{ batch.number_of_bags_completed }}</td>
                         <td>{{ batch.active_bags }}</td>
                         <td>{{ batch.total_harvested }} g</td>
                         <td>{{ batch.production_per_bag }} g</td>
@@ -45,6 +52,9 @@
                             </span>
                         </td>
                         <td>
+                            <a href="{% url 'update_completed_beds' batch.id %}" class="btn btn-success">
+                                <i class="fas fa-check"></i>
+                            </a>
                             <a href="{% url 'batch_edit' batch.id %}" class="btn btn-sm btn-primary" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>

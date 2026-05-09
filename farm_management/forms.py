@@ -6,7 +6,7 @@ class SpawnBatchForm(forms.ModelForm):
     class Meta:
         model = SpawnBatch
         fields = '__all__'
-        exclude = ['created_by', 'created_at', 'number_of_bags_contaminated']
+        exclude = ['created_by', 'created_at', 'number_of_bags_contaminated', 'number_of_bags_completed']
         widgets = {
             'batch_date': forms.DateInput(attrs={'type': 'date'}),
             'notes': forms.Textarea(attrs={'rows': 3}),
@@ -21,7 +21,28 @@ class SpawnBatchFormEdit(forms.ModelForm):
             'batch_date': forms.DateInput(attrs={'type': 'date'}),
             'notes': forms.Textarea(attrs={'rows': 3}),
         }
-
+class SpawnBatchCompleteForm(forms.ModelForm):
+    class Meta:
+        model = SpawnBatch
+        fields = ['number_of_bags_completed']  # Only show the completed_beds field
+        widgets = {
+            'number_of_bags_completed': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'step': '1',
+                'placeholder': 'Enter number of completed beds'
+            })
+        }
+    
+    def clean_completed_beds(self):
+        completed_beds = self.cleaned_data.get('number_of_bags_completed')
+        if completed_beds is not None and self.instance:
+            if completed_beds > self.instance.total_beds:
+                raise forms.ValidationError(f'Completed beds cannot exceed total beds ({self.instance.total_beds})')
+            if completed_beds < 0:
+                raise forms.ValidationError('Completed beds cannot be negative')
+        return completed_beds
+    
 class HarvestForm(forms.ModelForm):
     class Meta:
         model = Harvest

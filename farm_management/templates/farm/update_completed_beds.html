@@ -1,0 +1,140 @@
+{% extends 'farm/base.html' %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success">Update Completed Beds</button>
+            <a href="{% url 'batch_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% if batch_info %}
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5>Batch Information</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Total Beds:</strong> {{ batch_info.total_beds }}</p>
+        <p><strong>Currently Completed Beds:</strong> {{ batch_info.completed_beds }}</p>
+        <p><strong>Remaining Beds:</strong> {{ batch_info.remaining_beds }}</p>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" 
+                 style="width: {{ batch_info.completion_percentage }} %" 
+                 aria-valuenow="{{ batch_info.completion_percentage }}" 
+                 aria-valuemin="0" aria-valuemax="100">
+                {{ batch_info.completion_percentage }}%
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+    /* Style the form inputs */
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #28a745;
+    }
+    
+    /* Style for number input specifically */
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+    
+    /* Progress bar styling */
+    .progress {
+        height: 30px;
+        border-radius: 5px;
+        background-color: #e9ecef;
+    }
+    .progress-bar {
+        background-color: #28a745;
+        line-height: 30px;
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    // Get the input elements
+    const completedBedsInput = document.getElementById('id_completed_beds');
+    const totalBedsInput = document.getElementById('id_total_beds');
+    
+    // Add validation for completed beds
+    if (completedBedsInput && totalBedsInput) {
+        completedBedsInput.addEventListener('input', function() {
+            let completedBeds = parseFloat(this.value);
+            let totalBeds = parseFloat(totalBedsInput.value);
+            
+            // Validate that completed beds don't exceed total beds
+            if (!isNaN(completedBeds) && !isNaN(totalBeds) && completedBeds > totalBeds) {
+                this.value = totalBeds;
+                alert('Completed beds cannot exceed total beds. Value has been set to maximum.');
+            }
+            
+            // Validate that completed beds is not negative
+            if (!isNaN(completedBeds) && completedBeds < 0) {
+                this.value = 0;
+                alert('Completed beds cannot be negative. Value has been set to 0.');
+            }
+        });
+    }
+    
+    // Alternative: If you only have a field to update completed beds (without total beds in form)
+    const updateCompletedBedsInput = document.getElementById('id_completed_beds');
+    if (updateCompletedBedsInput) {
+        updateCompletedBedsInput.addEventListener('input', function() {
+            let value = parseFloat(this.value);
+            
+            // Get max value from data attribute if available
+            let maxBeds = parseInt(this.getAttribute('data-max-beds')) || Infinity;
+            
+            if (!isNaN(value) && value > maxBeds) {
+                this.value = maxBeds;
+                alert(`Completed beds cannot exceed ${maxBeds}. Value has been set to maximum.`);
+            }
+            
+            if (!isNaN(value) && value < 0) {
+                this.value = 0;
+                alert('Completed beds cannot be negative.');
+            }
+        });
+    }
+</script>
+{% endblock %}

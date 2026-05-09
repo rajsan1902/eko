@@ -12,6 +12,23 @@
             <!-- Main metrics -->
             <div class="row g-2 m-1 p-1 border border-2">
                 <div class="col-6">
+                    <div class="bg-success bg-opacity-10 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Active Batches</small>
+                        <h4 class="mb-0 text-white fw-bold">{{ active_batches }}</h4>
+                    </div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="bg-success text-white bg-opacity-25 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Active Beds</small>
+                        <h4 class="mb-0 text-whtie fw-bold">{{ active_beds }}</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sub metrics in grid -->
+            <div class="row g-2">
+                <div class="col-6">
                     <div class="bg-info bg-opacity-15 rounded p-2 text-center">
                         <h6 class="text-white">Total Batches</h6>
                         <h6 class="mb-0 text-white fw-bold">{{ total_batches }}</h6>
@@ -23,21 +40,12 @@
                         <h6 class="mb-0 text-white fw-bold">{{ total_beds }}</h6>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Sub metrics in grid -->
-            <div class="row g-2">
-                <div class="col-6">
-                    <div class="bg-success bg-opacity-10 rounded p-2 mb-2 text-center">
-                        <small class="text-white">Active Batches</small>
-                        <h4 class="mb-0 text-white fw-bold">{{ active_batches }}</h4>
-                    </div>
-                </div>
                 
-                <div class="col-6">
-                    <div class="bg-success text-white bg-opacity-25 rounded p-2 mb-2 text-center">
-                        <small class="text-white">Active Beds</small>
-                        <h4 class="mb-0 text-whtie fw-bold">{{ active_beds }}</h4>
+
+                 <div class="col-6">
+                    <div class="bg-success bg-opacity-25 rounded p-2 mb-2 text-center">
+                        <small class="text-white">Completed Beds</small>
+                        <h4 class="mb-0 text-white fw-bold">{{ completed_beds }}</h4>
                     </div>
                 </div>
                 <div class="col-6">
