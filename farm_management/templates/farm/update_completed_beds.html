@@ -45,7 +45,7 @@
         <p><strong>Remaining Beds:</strong> {{ batch_info.remaining_beds }}</p>
         <div class="progress">
             <div class="progress-bar" role="progressbar" 
-                 style="width: {{ batch_info.completion_percentage }} %" 
+                 style="width:{{batch_info.completion_percentage}}%" 
                  aria-valuenow="{{ batch_info.completion_percentage }}" 
                  aria-valuemin="0" aria-valuemax="100">
                 {{ batch_info.completion_percentage }}%
